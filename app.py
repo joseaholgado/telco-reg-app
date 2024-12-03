@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 # Cargar el modelo guardado
+@st.cache
 def cargar_modelo():
     with open('churn-model.pck', 'rb') as file:
         return pickle.load(file)
@@ -46,7 +47,7 @@ totalcharges = st.sidebar.number_input("Cargo total", min_value=0, value=200)
 
 # Preprocesar las variables categóricas
 def preprocesar_datos(input_data):
-    input_data['gender'] = input_data['gender'].apply(lambda x: 1 if x == 'Masculino' else 0)
+    input_data['gender'] = 1 if input_data['gender'] == 'Masculino' else 0
     input_data['partner'] = 1 if input_data['partner'] == 'Sí' else 0
     input_data['dependents'] = 1 if input_data['dependents'] == 'Sí' else 0
     input_data['phoneservice'] = 1 if input_data['phoneservice'] == 'Sí' else 0
