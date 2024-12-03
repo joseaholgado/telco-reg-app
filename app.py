@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 
 # Cargar el modelo guardado
-@st.cache
 def cargar_modelo():
     with open('churn-model.pck', 'rb') as file:
         return pickle.load(file)
