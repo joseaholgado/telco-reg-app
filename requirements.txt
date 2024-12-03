@@ -1,4 +1,5 @@
 pandas
+numpy
 sklearn
 pickle
 streamlit
