@@ -9,8 +9,7 @@ def cargar_modelo():
     with open('churn-model.pck', 'rb') as file:
         contenido = pickle.load(file)
         if isinstance(contenido, tuple) or isinstance(contenido, list):
-            # Asume que el modelo es el segundo elemento
-            return contenido[1]  
+            return contenido[1]  # Asume que el modelo está en la segunda posición
         return contenido
 
 # Cargar el modelo
@@ -19,7 +18,6 @@ modelo_regresion = cargar_modelo()
 # Título de la app
 st.title("Predicción de Telco - Modelo de Regresión Lineal")
 
-# Explicación de la app
 st.write("""
 Esta aplicación utiliza un modelo de regresión lineal entrenado sobre el dataset Telco para predecir características relacionadas con clientes de telecomunicaciones.
 Introduce los valores de las variables para hacer una predicción.
@@ -28,7 +26,6 @@ Introduce los valores de las variables para hacer una predicción.
 # Entradas del usuario
 st.sidebar.header("Introduce las características del cliente")
 
-# Variables categóricas y numéricas
 gender = st.sidebar.selectbox("Género", ['Femenino', 'Masculino'])
 seniorcitizen = st.sidebar.selectbox("Senior Citizen (1=Sí, 0=No)", [1, 0])
 partner = st.sidebar.selectbox("Tiene pareja", ['Sí', 'No'])
@@ -106,9 +103,15 @@ nuevos_datos = pd.DataFrame({
 # Preprocesar los datos antes de hacer la predicción
 nuevos_datos_procesados = preprocesar_datos(nuevos_datos)
 
+# Validar las columnas del modelo y reorganizar
+if hasattr(modelo_regresion, 'feature_names_in_'):
+    columnas_esperadas = modelo_regresion.feature_names_in_
+    nuevos_datos_procesados = nuevos_datos_procesados[columnas_esperadas]
+
 # Realizar la predicción con el modelo cargado
 if st.sidebar.button('Predecir'):
-    prediccion = modelo_regresion.predict(nuevos_datos_procesados)
-    
-    # Mostrar el resultado
-    st.write(f"La predicción del modelo es: {prediccion[0]:.2f}")
+    try:
+        prediccion = modelo_regresion.predict(nuevos_datos_procesados)
+        st.write(f"La predicción del modelo es: {prediccion[0]:.2f}")
+    except Exception as e:
+        st.error(f"Error al realizar la predicción: {e}")
