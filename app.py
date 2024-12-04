@@ -47,23 +47,34 @@ totalcharges = st.sidebar.number_input("Cargo total", min_value=0, value=200)
 
 # Preprocesar las variables categóricas
 def preprocesar_datos(input_data):
-    input_data['gender'] = 1 if input_data['gender'] == 'Masculino' else 0
-    input_data['partner'] = 1 if input_data['partner'] == 'Sí' else 0
-    input_data['dependents'] = 1 if input_data['dependents'] == 'Sí' else 0
-    input_data['phoneservice'] = 1 if input_data['phoneservice'] == 'Sí' else 0
-    input_data['multiplelines'] = 1 if input_data['multiplelines'] == 'Sí' else (0 if input_data['multiplelines'] == 'No phone service' else -1)
-    input_data['internetservice'] = 0 if input_data['internetservice'] == 'No internet service' else (1 if input_data['internetservice'] == 'DSL' else 2)
-    input_data['onlinesecurity'] = 1 if input_data['onlinesecurity'] == 'Sí' else (0 if input_data['onlinesecurity'] == 'No internet service' else -1)
-    input_data['onlinebackup'] = 1 if input_data['onlinebackup'] == 'Sí' else (0 if input_data['onlinebackup'] == 'No internet service' else -1)
-    input_data['deviceprotection'] = 1 if input_data['deviceprotection'] == 'Sí' else (0 if input_data['deviceprotection'] == 'No internet service' else -1)
-    input_data['techsupport'] = 1 if input_data['techsupport'] == 'Sí' else (0 if input_data['techsupport'] == 'No internet service' else -1)
-    input_data['streamingtv'] = 1 if input_data['streamingtv'] == 'Sí' else (0 if input_data['streamingtv'] == 'No internet service' else -1)
-    input_data['streamingmovies'] = 1 if input_data['streamingmovies'] == 'Sí' else (0 if input_data['streamingmovies'] == 'No internet service' else -1)
-    input_data['contract'] = 0 if input_data['contract'] == 'Mes a mes' else (1 if input_data['contract'] == 'Un año' else 2)
-    input_data['paperlessbilling'] = 1 if input_data['paperlessbilling'] == 'Sí' else 0
-    input_data['paymentmethod'] = 0 if input_data['paymentmethod'] == 'Banco' else (1 if input_data['paymentmethod'] == 'Cheque electrónico' else (2 if input_data['paymentmethod'] == 'Transferencia bancaria' else 3))
-    
-    return input_data
+    data = input_data.copy()
+    data['gender'] = np.where(data['gender'] == 'Masculino', 1, 0)
+    data['partner'] = np.where(data['partner'] == 'Sí', 1, 0)
+    data['dependents'] = np.where(data['dependents'] == 'Sí', 1, 0)
+    data['phoneservice'] = np.where(data['phoneservice'] == 'Sí', 1, 0)
+    data['multiplelines'] = np.where(data['multiplelines'] == 'Sí', 1, 
+                                     np.where(data['multiplelines'] == 'No phone service', 0, -1))
+    data['internetservice'] = np.where(data['internetservice'] == 'No internet service', 0, 
+                                       np.where(data['internetservice'] == 'DSL', 1, 2))
+    data['onlinesecurity'] = np.where(data['onlinesecurity'] == 'Sí', 1, 
+                                      np.where(data['onlinesecurity'] == 'No internet service', 0, -1))
+    data['onlinebackup'] = np.where(data['onlinebackup'] == 'Sí', 1, 
+                                    np.where(data['onlinebackup'] == 'No internet service', 0, -1))
+    data['deviceprotection'] = np.where(data['deviceprotection'] == 'Sí', 1, 
+                                        np.where(data['deviceprotection'] == 'No internet service', 0, -1))
+    data['techsupport'] = np.where(data['techsupport'] == 'Sí', 1, 
+                                   np.where(data['techsupport'] == 'No internet service', 0, -1))
+    data['streamingtv'] = np.where(data['streamingtv'] == 'Sí', 1, 
+                                   np.where(data['streamingtv'] == 'No internet service', 0, -1))
+    data['streamingmovies'] = np.where(data['streamingmovies'] == 'Sí', 1, 
+                                       np.where(data['streamingmovies'] == 'No internet service', 0, -1))
+    data['contract'] = np.where(data['contract'] == 'Mes a mes', 0, 
+                                np.where(data['contract'] == 'Un año', 1, 2))
+    data['paperlessbilling'] = np.where(data['paperlessbilling'] == 'Sí', 1, 0)
+    data['paymentmethod'] = np.where(data['paymentmethod'] == 'Banco', 0, 
+                                     np.where(data['paymentmethod'] == 'Cheque electrónico', 1, 
+                                              np.where(data['paymentmethod'] == 'Transferencia bancaria', 2, 3)))
+    return data
 
 # Crear un DataFrame con los datos introducidos
 nuevos_datos = pd.DataFrame({
