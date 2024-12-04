@@ -4,10 +4,14 @@ import pandas as pd
 import numpy as np
 
 # Cargar el modelo guardado
-@st.cache
+@st.cache_resource
 def cargar_modelo():
     with open('churn-model.pck', 'rb') as file:
-        return pickle.load(file)
+        contenido = pickle.load(file)
+        if isinstance(contenido, tuple) or isinstance(contenido, list):
+            # Asume que el modelo es el segundo elemento
+            return contenido[1]  
+        return contenido
 
 # Cargar el modelo
 modelo_regresion = cargar_modelo()
